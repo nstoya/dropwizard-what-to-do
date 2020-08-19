@@ -1,0 +1,38 @@
+logging:
+  level: INFO
+  loggers:
+    WhatToDo: DEBUG
+
+    "org.hibernate.SQL":
+      level: DEBUG
+      additive: false
+      appenders:
+        - type: console
+
+    "org.hibernate.type.descriptor.sql":
+      additivity: false
+      level: TRACE
+      appenders:
+        - type: console
+
+database:
+  driverClass: org.postgresql.Driver
+  user: postgres
+  password: password
+  url: jdbc:postgresql://localhost/whattodo
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
+  maxWaitForConnection: 1s
+
+  # the SQL query to run when validating a connection's liveness
+  validationQuery: "/* MyApplication Health Check */ SELECT 1"
+
+  # the minimum number of connections to keep open
+  minSize: 8
+
+  # the maximum number of connections to keep open
+  maxSize: 32
+
+  # whether or not idle connections should be validated
+  checkConnectionWhileIdle: false
