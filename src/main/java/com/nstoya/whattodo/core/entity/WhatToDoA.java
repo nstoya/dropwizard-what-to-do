@@ -3,7 +3,6 @@ package com.nstoya.whattodo.core.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
 
 @MappedSuperclass
 public abstract class WhatToDoA {
@@ -13,12 +12,15 @@ public abstract class WhatToDoA {
     @Column(updatable = false, nullable = false)
     private Long id;
 
-    @NotNull @NotBlank //darf weder null noch "" sein
+    @NotNull (message = "is mandatory but missing.")
+    @NotBlank (message = "is not allowed to be an empty string.")//darf weder null noch "" sein
     @Column(name = "NAME", nullable = false)
     private String name;
 
     @Column(name = "DESCRIPTION")
     private String description;
+
+    public WhatToDoA(){}
 
     public WhatToDoA(String name, String description){
         this.name = name;

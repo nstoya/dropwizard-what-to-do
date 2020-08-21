@@ -1,22 +1,24 @@
 package com.nstoya.whattodo.core.entity;
 
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.annotations.Where;
+
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "WHATTODO")
-@NamedQueries(
-        {
-                @NamedQuery(
-                        name = "com.nstoya.whattodo.core.entity.ToDo.findAllTodos",
-                        query = "SELECT e FROM ToDo e"
-                )
-        })
+@Where(clause = "PARENT is null")
 public class ToDo extends WhatToDoA{
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @Size(max = 25, message = "Only 25 tasks per Todo are possible.")
     private List<Task> tasks = new ArrayList<>();
+
+    public ToDo(){}
 
     public ToDo(String name, String description){
         super(name, description);

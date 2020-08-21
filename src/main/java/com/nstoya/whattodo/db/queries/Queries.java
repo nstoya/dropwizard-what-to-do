@@ -18,6 +18,7 @@ public class Queries {
             firstRes = (page-1) * pageSize;
         }
 
+        String queryString = "select * from " + tableName + " " + restriction + " order by id asc";
         Query<T> query = session
                 .createNativeQuery("select * from " + tableName + " " + restriction + " order by id asc", clazz)
                 .setFirstResult(firstRes)

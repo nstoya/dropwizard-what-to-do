@@ -1,10 +1,16 @@
 package com.nstoya.whattodo.db;
 
+import com.nstoya.whattodo.core.entity.Task;
 import com.nstoya.whattodo.core.entity.ToDo;
+import com.nstoya.whattodo.core.paging.Paging;
 import com.nstoya.whattodo.db.queries.Queries;
 import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.hibernate.query.criteria.internal.expression.ExpressionImpl;
 
+import javax.persistence.Table;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.*;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,9 +24,14 @@ public class ToDoDAO extends AbstractDAO<ToDo> {
     }
 
 
-    public ToDo create (ToDo toDo){
+    public ToDo create (ToDo toDo, TaskDAO taskDAO){
 
-        return persist(toDo);
+        ToDo persistedTodo = persist(toDo);
+        for (Task t: toDo.getTasks()){
+            t.setParent(toDo);
+            taskDAO.create(t);
+        }
+        return persistedTodo;
     }
 
     public ToDo update (Long id, ToDo toDo){
@@ -28,6 +39,8 @@ public class ToDoDAO extends AbstractDAO<ToDo> {
         if(e != null){
             e.setName(toDo.getName());
             e.setDescription(toDo.getDescription());
+            //TODO remove old tasks
+            e.setTasks(toDo.getTasks());
             return persist(e);
         }
         return null;
@@ -47,15 +60,40 @@ public class ToDoDAO extends AbstractDAO<ToDo> {
         CriteriaBuilder builder = currentSession().getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQ = builder.createQuery(Long.class);
         Root<ToDo> root = criteriaQ.from(ToDo.class);
-
-       // builder.isNull(root.get("parent"));
         criteriaQ.select(builder.count(root));
-
         return currentSession().createQuery(criteriaQ).getSingleResult();
     }
 
-    public List<ToDo> find(int page, int pageSize){
-        String where = "where PARENT = null";
-        return Queries.getByPage(page, pageSize, ToDo.class, currentSession(), where);
+    public List<ToDo> findByPage(int page, int pageSize){
+
+
+        pageSize = pageSize == 0 ? Paging.STANDARD_PAGE_SIZE : pageSize;
+        page = page <= 0 ? 1 : page;
+
+        int firstRes = page > 1 ? (page-1) * pageSize : 0;
+        CriteriaBuilder builder = currentSession().getCriteriaBuilder();
+        CriteriaQuery<ToDo> criteriaQ = builder.createQuery(ToDo.class);
+        Root<ToDo> root = criteriaQ.from(ToDo.class);
+        criteriaQ.select(root);
+        criteriaQ.orderBy(builder.asc(root.get("id")));
+        TypedQuery<ToDo> typedQuery = currentSession().createQuery(criteriaQ);
+        typedQuery.setFirstResult(firstRes);
+        typedQuery.setMaxResults(pageSize);
+
+        return typedQuery.getResultList();
+
+    }
+
+    public List<ToDo> findById(int page, int pageSize){
+        int firstRes = 0;
+        if(page > 1){
+            firstRes = (page-1) * pageSize;
+        }
+        Query<ToDo> query = currentSession()
+                .createNativeQuery("select * from " + ToDo.class.getAnnotation(Table.class).name() + " where PARENT is null order by id asc", ToDo.class)
+                .setFirstResult(firstRes)
+                .setMaxResults(( pageSize == 0 || pageSize > Paging.MAX_PAGE_SIZE) ? Paging.STANDARD_PAGE_SIZE : pageSize);
+
+        return query.getResultList();
     }
 }

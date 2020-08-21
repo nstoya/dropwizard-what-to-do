@@ -1,5 +1,7 @@
 package com.nstoya.whattodo.core.paging;
 
+import javax.ws.rs.core.UriInfo;
+
 public class Paging {
 
     public static final int MAX_PAGE_SIZE = 1000;
@@ -24,10 +26,24 @@ public class Paging {
             page = 1;
         }
 
-        if((page + 1) < lastPage(total, page, pageSize)){
+        if((page + 1) <= lastPage(total, page, pageSize)){
             return page + 1;
         }
-        return page;
+        return 0;
+    }
+
+    public static String getLinkHeader(UriInfo uriInfo, String path, long total, long page, int pageSize){
+       long nextPage = nextPage(total, page, pageSize);
+        String nextPageHeader = nextPage == 0
+                ? ""
+                : "<" + uriInfo.getBaseUri() + path + "?page=" + nextPage + "&pageSize="
+                    + (pageSize != 0
+                        ? pageSize
+                        : Paging.STANDARD_PAGE_SIZE) + ">; rel=\"next\", " ;
+        return  nextPageHeader
+                + "<" + uriInfo.getBaseUri() + path + "?page=" + (Paging.lastPage(total, nextPage - 1, pageSize))
+                + "&pageSize=" + (pageSize != 0 ? pageSize : Paging.STANDARD_PAGE_SIZE) + ">; rel=\"last\"";
+
     }
 
 }

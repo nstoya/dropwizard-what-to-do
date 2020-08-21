@@ -2,6 +2,7 @@ package com.nstoya.whattodo;
 
 import com.nstoya.whattodo.core.entity.Task;
 import com.nstoya.whattodo.core.entity.ToDo;
+import com.nstoya.whattodo.db.TaskDAO;
 import com.nstoya.whattodo.db.ToDoDAO;
 import com.nstoya.whattodo.health.DatabaseHealthCheck;
 import com.nstoya.whattodo.health.ResourcesHealthCheck;
@@ -51,8 +52,6 @@ public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
                     final Environment environment) {
 
 
-//        final EmployeeDAO dao = new EmployeeDAO(hibernate.getSessionFactory());
-
         //register Auth
 //        AuthFilter<String, User> oauthFilter = new OAuthCredentialAuthFilter.Builder<User>()
 //                .setAuthenticator(new WhatToDoOAuthAuthenticator())
@@ -66,7 +65,7 @@ public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
 
         //register resources
 //        environment.jersey().register(new EmployeeResource(dao, environment.getValidator()));
-        final ToDosResource resource = new ToDosResource(new ToDoDAO(hibernate.getSessionFactory()), environment.getValidator());
+        final ToDosResource resource = new ToDosResource(new ToDoDAO(hibernate.getSessionFactory()), new TaskDAO(hibernate.getSessionFactory()), environment.getValidator());
         environment.jersey().register(resource);
 
         //register healthCheck
