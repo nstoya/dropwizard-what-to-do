@@ -72,4 +72,14 @@ public class ToDosResource {
             return Response.status(Response.Status.NOT_FOUND).build();
     }
 
+    @DELETE
+    @Path("/{id}")
+    @UnitOfWork
+    @PermitAll
+    public Response removeEmployeeById(@PathParam("id") Long id) {
+        boolean success = toDoDAO.delete(id);
+        //do we want to tell if the object didn't exist anyway?
+        return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
 }
