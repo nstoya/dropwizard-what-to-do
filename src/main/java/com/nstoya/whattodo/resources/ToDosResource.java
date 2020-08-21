@@ -1,9 +1,11 @@
 package com.nstoya.whattodo.resources;
 
+import com.nstoya.whattodo.core.User;
 import com.nstoya.whattodo.core.entity.ToDo;
 import com.nstoya.whattodo.core.paging.Paging;
 import com.nstoya.whattodo.db.TaskDAO;
 import com.nstoya.whattodo.db.ToDoDAO;
+import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 
 import javax.annotation.security.PermitAll;
@@ -37,7 +39,7 @@ public class ToDosResource {
     @GET
     @UnitOfWork
     @PermitAll
-    public Response getToDos(@QueryParam("page") int page, @QueryParam("page_size") int pageSize, @Context UriInfo uriInfo){
+    public Response getToDos(@Auth User user, @QueryParam("page") int page, @QueryParam("page_size") int pageSize, @Context UriInfo uriInfo){
         long total = toDoDAO.getCount();
 
         return Response
@@ -53,7 +55,7 @@ public class ToDosResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UnitOfWork
     @PermitAll
-    public Response getToDo(@PathParam("id") Long id){
+    public Response getToDo(@Auth User user, @PathParam("id") Long id){
         ToDo toDo =  toDoDAO.getTodo(id);
 
         return toDoDAO.getTodo(id) != null
@@ -66,7 +68,7 @@ public class ToDosResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UnitOfWork
     @PermitAll
-    public Response createTodo(@Valid ToDo toDo) throws URISyntaxException {
+    public Response createTodo(@Auth User user, @Valid ToDo toDo) throws URISyntaxException {
         return Response.status(Response.Status.CREATED).entity(toDoDAO.create(toDo, taskDAO)).build();
     }
 
@@ -76,7 +78,7 @@ public class ToDosResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UnitOfWork
     @PermitAll
-    public Response updateTodoById(@PathParam("id") Long id, @Valid ToDo toDo) {
+    public Response updateTodoById(@Auth User user, @PathParam("id") Long id, @Valid ToDo toDo) {
 
         ToDo e = toDoDAO.update(id, toDo);
         if(e != null){
@@ -89,7 +91,7 @@ public class ToDosResource {
     @Path("/{id}")
     @UnitOfWork
     @PermitAll
-    public Response removeEmployeeById(@PathParam("id") Long id) {
+    public Response removeEmployeeById(@Auth User user, @PathParam("id") Long id) {
         boolean success = toDoDAO.delete(id);
         //do we want to tell if the object didn't exist anyway?
         return Response.status(Response.Status.NO_CONTENT).build();
