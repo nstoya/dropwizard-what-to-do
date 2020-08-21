@@ -42,11 +42,13 @@ public class ToDoDAO extends AbstractDAO<ToDo> {
             existingTodo.setName(toDo.getName());
             existingTodo.setDescription(toDo.getDescription());
 
-            for (Task t: toDo.getTasks()){
-                t.setParent(existingTodo);
+            if(toDo.getTasks() != null){
+                for (Task t: toDo.getTasks()){
+                    t.setParent(existingTodo);
+                }
+                existingTodo.setTasks(toDo.getTasks());
             }
 
-            existingTodo.setTasks(toDo.getTasks());
             persist(existingTodo);
             return existingTodo;
         }
