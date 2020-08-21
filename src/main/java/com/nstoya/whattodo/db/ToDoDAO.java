@@ -81,4 +81,7 @@ public class ToDoDAO extends AbstractDAO<ToDo> {
         return typedQuery.getResultList();
     }
 
+    public ToDo getTodo(Long id) {
+        return get(id);
+    }
 }

@@ -48,6 +48,19 @@ public class ToDosResource {
                 .build();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @UnitOfWork
+    @PermitAll
+    public Response getToDo(@PathParam("id") Long id){
+        ToDo toDo =  toDoDAO.getTodo(id);
+
+        return toDoDAO.getTodo(id) != null
+                ? Response.status(Response.Status.OK).entity(toDo).build()
+                : Response.status(Response.Status.NOT_FOUND).entity("").build();
+    }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
