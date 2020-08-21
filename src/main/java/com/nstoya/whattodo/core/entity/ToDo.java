@@ -14,7 +14,7 @@ import java.util.List;
 @Where(clause = "PARENT is null")
 public class ToDo extends WhatToDoA{
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @Size(max = 25, message = "Only 25 tasks per Todo are possible.")
     private List<Task> tasks = new ArrayList<>();
 
@@ -29,6 +29,7 @@ public class ToDo extends WhatToDoA{
     }
 
     public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+        this.tasks.removeAll(this.tasks);
+        this.tasks.addAll(tasks);
     }
 }

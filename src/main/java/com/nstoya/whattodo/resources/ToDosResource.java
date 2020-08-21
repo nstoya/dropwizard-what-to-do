@@ -64,21 +64,6 @@ public class ToDosResource {
     @UnitOfWork
     @PermitAll
     public Response updateTodoById(@PathParam("id") Long id, @Valid ToDo toDo) {
-//         validation
-//        Set<ConstraintViolation<ToDo>> violations = validator.validate(toDo);
-//
-//        if (violations.size() > 0) {
-//            ArrayList<String> validationMessages = new ArrayList<String>();
-//            for (ConstraintViolation<ToDo> violation : violations) {
-//
-//               // javax.validation.constraints.NotNull
-//                if(violation.getConstraintDescriptor().getAnnotation().annotationType().getName().equals("")){
-//
-//                }
-//                validationMessages.add(violation.getPropertyPath().toString() + ": " + violation.getMessage());
-//            }
-//            return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
-//        }
 
         ToDo e = toDoDAO.update(id, toDo);
         if(e != null){

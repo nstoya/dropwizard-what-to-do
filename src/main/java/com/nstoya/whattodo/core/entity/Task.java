@@ -12,7 +12,7 @@ import javax.persistence.*;
 
 public class Task extends WhatToDoA{
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(optional = false)
     @JoinColumn(name = "PARENT")
     @JsonIgnore
     private ToDo parent;
