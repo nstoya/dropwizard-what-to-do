@@ -13,6 +13,4 @@ This is a small example app with dropwizard and hibernate.
 
 ## TODO
 
-* Tests to check, that the code makes sure there the primary key and name are provided and get checked.
-* Test make sure parent exist
 * Auth
