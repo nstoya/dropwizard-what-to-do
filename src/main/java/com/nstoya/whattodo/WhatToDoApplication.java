@@ -80,7 +80,7 @@ public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
         environment.healthChecks().register("database", dbHealthCheck);
 
         final ResourcesHealthCheck resourcesHealthCheck =
-                new ResourcesHealthCheck();
+                new ResourcesHealthCheck(configuration.getHealthCheckPath(), configuration.getHealthCheckToken());
         environment.healthChecks().register("resources", resourcesHealthCheck);
     }
 

@@ -36,3 +36,6 @@ database:
 
   # whether or not idle connections should be validated
   checkConnectionWhileIdle: false
+
+healthCheckPath: http://localhost:8080/todos
+healthCheckToken: Bearer test-token
