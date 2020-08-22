@@ -2,47 +2,34 @@ logging:
   level: INFO
   loggers:
     WhatToDo: DEBUG
-      appenders:
-          - type: console
-
-    "org.hibernate.SQL":
-      level: DEBUG
-      additive: false
-      appenders:
-        - type: console
-
-    "org.hibernate.type.descriptor.sql":
-      additivity: false
-      level: TRACE
-      appenders:
-        - type: console
-
-# Appenders type file
+  appenders:
+    - type: file
+      currentLogFilename: ./log/what-to-do.log
+      threshold: ALL
+      queueSize: 512
+      discardingThreshold: 0
+      archive: true
+      archivedLogFilenamePattern: ./log/what-to-do-%d.log
+      archivedFileCount: 5
+      logFormat: "%-5p [%d{ISO8601,UTC+02:00}] %c: %m%n%rEx"
+      bufferSize: 8KiB
+      immediateFlush: true
+    - type: console
 
 database:
   driverClass: org.postgresql.Driver
   user: postgres
   password: password
-
-  # use container name
   url: jdbc:postgresql://postgres/whattodo
-
-  # any properties specific to your JDBC driver:
   properties:
     charSet: UTF-8
     hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
-
-  # the maximum amount of time to wait on an empty pool before throwing an exception
   maxWaitForConnection: 1s
-
-  # the SQL query to run when validating a connection's liveness
   validationQuery: "/* MyApplication Health Check */ SELECT 1"
-
-  # the minimum number of connections to keep open
   minSize: 8
-
-  # the maximum number of connections to keep open
   maxSize: 32
-
-  # whether or not idle connections should be validated
   checkConnectionWhileIdle: false
+
+healthCheckPath: http://localhost:8080/todos
+healthCheckToken: Bearer test-token
+authToken: test-token

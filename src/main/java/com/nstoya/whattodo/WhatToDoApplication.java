@@ -61,7 +61,7 @@ public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
 
         //register Auth
         AuthFilter<String, User> oauthFilter = new OAuthCredentialAuthFilter.Builder<User>()
-                .setAuthenticator(new WhatToDoOAuthAuthenticator())
+                .setAuthenticator(new WhatToDoOAuthAuthenticator(configuration.getAuthToken()))
                 .setAuthorizer(new WhatToDoAuthorizer())
                 .setPrefix("Bearer")
                 .buildAuthFilter();

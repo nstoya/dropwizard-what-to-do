@@ -1,3 +1,9 @@
+healthCheckPath: http://localhost:8080/todos
+
+healthCheckToken: Bearer test-token
+
+authToken: test-token
+
 logging:
   level: INFO
   loggers:
@@ -15,6 +21,23 @@ logging:
       appenders:
         - type: console
 
+  appenders:
+    - type: file
+      currentLogFilename: ./log/what-to-do.log
+      threshold: ALL
+      queueSize: 512
+      discardingThreshold: 0
+      archive: true
+      archivedLogFilenamePattern: ./log/what-to-do-%d.log
+      archivedFileCount: 5
+      logFormat: "%-5p [%d{ISO8601,UTC+02:00}] %c: %m%n%rEx"
+      bufferSize: 8KiB
+      immediateFlush: true
+    - type: console
+
+
+
+
 database:
   driverClass: org.postgresql.Driver
   user: postgres
@@ -25,8 +48,7 @@ database:
     hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
   maxWaitForConnection: 1s
 
-  # the SQL query to run when validating a connection's liveness
-  validationQuery: "/* MyApplication Health Check */ SELECT 1"
+  validationQuery: SELECT 1
 
   # the minimum number of connections to keep open
   minSize: 8
@@ -37,5 +59,3 @@ database:
   # whether or not idle connections should be validated
   checkConnectionWhileIdle: false
 
-healthCheckPath: http://localhost:8080/todos
-healthCheckToken: Bearer test-token

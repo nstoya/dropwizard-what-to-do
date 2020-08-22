@@ -15,6 +15,10 @@ public class WhatToDoConfiguration extends Configuration {
 
     @NotEmpty
     private String healthCheckToken;
+
+    @NotEmpty
+    private String authToken;
+
     @Valid
     @NotNull
     private DataSourceFactory dataSourceFactory = new DataSourceFactory();
@@ -38,5 +42,15 @@ public class WhatToDoConfiguration extends Configuration {
     @JsonProperty
     public String getHealthCheckToken(){
         return healthCheckToken;
+    }
+
+    @JsonProperty
+    public String getAuthToken() {
+        return authToken;
+    }
+
+    @JsonProperty
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 }
