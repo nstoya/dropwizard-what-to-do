@@ -9,30 +9,31 @@ import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 
 import javax.annotation.security.PermitAll;
-import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validator;
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Set;
 
 
 @Path("/todos")
 @Produces(MediaType.APPLICATION_JSON)
 public class ToDosResource {
 
-    private final Validator validator;
     private final ToDoDAO toDoDAO;
     private final TaskDAO taskDAO;
 
-    public ToDosResource(ToDoDAO toDoDAO, TaskDAO taskDAO, Validator validator){
+    public ToDosResource(ToDoDAO toDoDAO, TaskDAO taskDAO){
         this.toDoDAO = toDoDAO;
-        this.validator = validator;
         this.taskDAO = taskDAO;
     }
 
@@ -68,7 +69,7 @@ public class ToDosResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UnitOfWork
     @PermitAll
-    public Response createTodo(@Auth User user, @Valid ToDo toDo) throws URISyntaxException {
+    public Response createTodo(@Auth User user, @Valid ToDo toDo) {
         return Response.status(Response.Status.CREATED).entity(toDoDAO.create(toDo, taskDAO)).build();
     }
 

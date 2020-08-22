@@ -7,7 +7,6 @@ import com.nstoya.whattodo.core.entity.Task;
 import com.nstoya.whattodo.core.entity.ToDo;
 import com.nstoya.whattodo.db.TaskDAO;
 import com.nstoya.whattodo.db.ToDoDAO;
-import com.nstoya.whattodo.health.DatabaseHealthCheck;
 import com.nstoya.whattodo.health.ResourcesHealthCheck;
 import com.nstoya.whattodo.resources.ToDosResource;
 import io.dropwizard.Application;
@@ -20,7 +19,6 @@ import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
 public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
@@ -71,14 +69,11 @@ public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
 
         //register resources
-        final ToDosResource resource = new ToDosResource(new ToDoDAO(hibernate.getSessionFactory()), new TaskDAO(hibernate.getSessionFactory()), environment.getValidator());
+        final ToDosResource resource = new ToDosResource(new ToDoDAO(hibernate.getSessionFactory()),
+                new TaskDAO(hibernate.getSessionFactory()));
         environment.jersey().register(resource);
 
         //register healthCheck
-        final DatabaseHealthCheck dbHealthCheck =
-                new DatabaseHealthCheck(configuration.getDataSourceFactory());
-        environment.healthChecks().register("database", dbHealthCheck);
-
         final ResourcesHealthCheck resourcesHealthCheck =
                 new ResourcesHealthCheck(configuration.getHealthCheckPath(), configuration.getHealthCheckToken());
         environment.healthChecks().register("resources", resourcesHealthCheck);
