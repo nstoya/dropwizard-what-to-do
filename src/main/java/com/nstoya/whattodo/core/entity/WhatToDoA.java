@@ -16,7 +16,7 @@ public abstract class WhatToDoA {
     private Long id;
 
     @NotNull (message = "is mandatory but missing.")
-    @NotBlank (message = "is not allowed to be an empty string.")//darf weder null noch "" sein
+    @NotBlank (message = "is not allowed to be an empty string.")
     @Column(name = "NAME", nullable = false)
     private String name;
 
