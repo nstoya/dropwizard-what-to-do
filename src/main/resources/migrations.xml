@@ -6,7 +6,7 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
 
-    <changeSet id="1" author="codahale">
+    <changeSet id="1" author="nadezhda">
         <createTable tableName="WHATTODO">
             <column name="ID" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
@@ -19,5 +19,38 @@
             <column name="PARENT" type="bigint">
             </column>
         </createTable>
+    </changeSet>
+    <changeSet  id="2" author="nadezhda">
+        <insert  schemaName="public"
+                 tableName="whattodo">
+            <column  name="name"  value="Vor dem Urlaub"/>
+            <column  name="description"  value="Vor Reiseantritt"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="whattodo">
+            <column  name="name"  value="Gültigkeit Reisepässe"/>
+            <column  name="parent"  value="1"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="whattodo">
+            <column  name="name"  value="Gepäckbestimmungen"/>
+            <column  name="description"  value="für Lufthansa"/>
+            <column  name="parent"  value="1"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="whattodo">
+            <column  name="name"  value="Vor Abreise"/>
+            <column  name="description"  value="Am Tag selbst"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="whattodo">
+            <column  name="name"  value="Müll entsorgen"/>
+            <column  name="parent"  value="4"/>
+        </insert>
+        <insert  schemaName="public"
+                 tableName="whattodo">
+            <column  name="name"  value="Stecker ziehen"/>
+            <column  name="parent"  value="4"/>
+        </insert>
     </changeSet>
 </databaseChangeLog>
