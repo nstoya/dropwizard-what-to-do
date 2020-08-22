@@ -1,9 +1,12 @@
 package com.nstoya.whattodo.core.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @MappedSuperclass
 public abstract class WhatToDoA {
 
@@ -16,6 +19,7 @@ public abstract class WhatToDoA {
     @NotBlank (message = "is not allowed to be an empty string.")//darf weder null noch "" sein
     @Column(name = "NAME", nullable = false)
     private String name;
+
 
     @Column(name = "DESCRIPTION")
     private String description;

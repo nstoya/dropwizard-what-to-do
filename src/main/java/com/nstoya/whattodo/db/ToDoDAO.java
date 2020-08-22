@@ -21,9 +21,11 @@ public class ToDoDAO extends AbstractDAO<ToDo> {
     public ToDo create (ToDo toDo, TaskDAO taskDAO){
 
         ToDo persistedTodo = persist(toDo);
-        for (Task t: toDo.getTasks()){
-            t.setParent(toDo);
-            taskDAO.create(t);
+        if(toDo.getTasks() != null){
+            for (Task t: toDo.getTasks()){
+                t.setParent(toDo);
+                taskDAO.create(t);
+            }
         }
         return persistedTodo;
     }
