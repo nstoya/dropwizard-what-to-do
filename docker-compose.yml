@@ -1,0 +1,19 @@
+version: "3.3"
+services:
+  postgres:
+    image: "postgres:latest"
+    expose:
+      - 5432
+    volumes:
+      - postgres
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=whattodo
+  whattodo-app:
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+volumes:
+  postgres:
