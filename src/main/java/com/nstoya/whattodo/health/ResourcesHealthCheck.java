@@ -20,7 +20,6 @@ public class ResourcesHealthCheck extends HealthCheck {
         this.authToken = authToken;
     }
 
-    //TODO check resources
     @Override
     protected Result check() throws Exception {
         Request request = new Request.Builder()
