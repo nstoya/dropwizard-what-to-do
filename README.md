@@ -3,7 +3,9 @@ This is a simple example app using dropwizard and hibernate to manage todo lists
 
 ## Getting started
 
-What you need:
+Prerequisites:
+
+Make sure you have already installed
 
 * docker installed
 * an sh shell

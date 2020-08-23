@@ -5,7 +5,7 @@ services:
     expose:
       - 5432
     volumes:
-      - postgres
+      - "postgres:/var/lib/postgresql/data"
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
