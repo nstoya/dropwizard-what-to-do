@@ -22,18 +22,19 @@ logging:
         - type: console
 
   appenders:
-    - type: file
-      currentLogFilename: ./log/what-to-do.log
-      threshold: ALL
-      queueSize: 512
-      discardingThreshold: 0
-      archive: true
-      archivedLogFilenamePattern: ./log/what-to-do-%d.log
-      archivedFileCount: 5
-      logFormat: "%-5p [%d{ISO8601,UTC+02:00}] %c: %m%n%rEx"
-      bufferSize: 8KiB
-      immediateFlush: true
     - type: console
+    #- type: file
+     # currentLogFilename: ./log/what-to-do.log
+      #threshold: ALL
+      #queueSize: 512
+      #discardingThreshold: 0
+      #archive: true
+      #archivedLogFilenamePattern: ./log/what-to-do-%d.log
+      #archivedFileCount: 5
+      #logFormat: "%-5p [%d{ISO8601,UTC+02:00}] %c: %m%n%rEx"
+      #bufferSize: 8KiB
+      #immediateFlush: true
+
 
 
 

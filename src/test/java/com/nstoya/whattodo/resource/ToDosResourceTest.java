@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
+import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -49,12 +50,22 @@ public class ToDosResourceTest {
                     .setPrefix("Bearer")
                     .buildAuthFilter();
 
-    private static final ResourceExtension RESOURCES = ResourceExtension.builder()
+    private static ResourceExtension r = ResourceExtension.builder()
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthDynamicFeature(O_AUTH_HANDLER))
             .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-            .addResource(new ToDosResource(TODO_DAO, TASK_DAO))
+        .build();
+
+
+    private static final ResourceExtension RESOURCES = r.builder().addResource(new ToDosResource(TODO_DAO, TASK_DAO, r.getValidator()))
             .build();
+
+//            ResourceExtension.builder()
+//            .addProvider(RolesAllowedDynamicFeature.class)
+//            .addProvider(new AuthDynamicFeature(O_AUTH_HANDLER))
+//            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
+
+
 
     private ArgumentCaptor<ToDo> toDoCaptor = ArgumentCaptor.forClass(ToDo.class);
 
@@ -63,6 +74,7 @@ public class ToDosResourceTest {
 
     @BeforeEach
     public void setup() {
+
         toDo = new ToDo("1", "description 1");
         toDo.setId(1L);
         tasks = new ArrayList<>();
