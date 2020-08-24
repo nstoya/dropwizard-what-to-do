@@ -13,6 +13,8 @@ import javax.annotation.security.PermitAll;
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
 import javax.validation.Validator;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -78,7 +80,9 @@ public class ToDosResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UnitOfWork
     @PermitAll
-    public Response createTodo(@Auth User user, @Valid ToDo toDo) {
+    public Response createTodo(@Auth User user, @Valid @NotNull ToDo toDo) {
+
+
 
         List<String> validationMessages = validateTasks(toDo.getTasks());
 
@@ -94,7 +98,7 @@ public class ToDosResource {
     @Produces(MediaType.APPLICATION_JSON)
     @UnitOfWork
     @PermitAll
-    public Response updateTodoById(@Auth User user, @PathParam("id") Long id, @Valid ToDo toDo) {
+    public Response updateTodoById(@Auth User user, @PathParam("id") Long id, @Valid @NotNull ToDo toDo) {
 
         List<String> validationMessages = validateTasks(toDo.getTasks());
 
