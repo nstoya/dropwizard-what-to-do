@@ -15,7 +15,7 @@ import java.util.List;
 public class ToDo extends WhatToDoA{
 
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @Size(max = 25, message = "Only 25 tasks per Todo are possible.")
+    @Size(max = 25, message = "Only 25 tasks per todo are possible.")
     private List<Task> tasks;
 
     public ToDo(){}

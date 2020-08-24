@@ -1,27 +1,68 @@
 # dropwizard-what-to-do
 This is a simple example app using dropwizard and hibernate to manage todo lists via api calls. 
 
-## Getting started
 
-Prerequisites:
+## Prerequisites:
 
-Make sure you have already installed
+Make sure you have already 
 
 * docker installed
-* an sh shell
+* curl installed
+* a running unix shell
 
-Checkout the project
- 
-    git clone https://github.com/nstoya/dropwizard-what-to-do.git
+## Setup
+
+To build and create example data run the following in a shell:
+  
+    $ git clone https://github.com/nstoya/dropwizard-what-to-do.git
+    $ cd dropwizard-what-to-do
+    $./start.sh
     
-Build and prepare:
+## Start
 
-    run script
+Start the application via
+
+    $ docker-compose up
+  
+The application should be running on http://localhost:8080 and you should be able to send requests. There is already some sample data.
+
+    $ curl --location --request GET 'http://localhost:8080/todos' --header 'Authorization: Bearer test-token'
     
-Run
+If everything is fine you should get:
 
-    cd directory
-    docker-compose up
+    [
+        {
+            "id": 1,
+            "name": "Vor dem Urlaub",
+            "description": "Vor Reiseantritt",
+            "tasks": [
+                {
+                    "id": 2,
+                    "name": "Gültigkeit Reisepässe"
+                },
+                {
+                    "id": 3,
+                    "name": "Gepäckbestimmungen",
+                    "description": "für Lufthansa"
+                }
+            ]
+        },
+        {
+            "id": 4,
+            "name": "Vor Abreise",
+            "description": "Am Tag selbst",
+            "tasks": [
+                {
+                    "id": 5,
+                    "name": "Müll entsorgen"
+                },
+                {
+                    "id": 6,
+                    "name": "Stecker ziehen"
+                }
+            ]
+        }
+    ]
     
 ## Authentication
 
@@ -31,40 +72,141 @@ one user exists. The needed token is configured in the config-prod.yml file in t
 
 If the token is not valid a http 401 (Unauthorized) error code is returned.
 
-## Error Codes
-
-|   |   |   |   |   |
-|---|---|---|---|---|
-|   |   |   |   |   |
-|   |   |   |   |   |
-|   |   |   |   |   |
-
 ## Endpoints
 
 * `GET /todos` 
 
-    Returns a list of all todos and their tasks.
-    
-    Parameters
+Returns a list of all todos and their tasks. For this endpoint paging is provided. Please check chapter **Paging And
+ Total Count**.
 
-    | Name  | Type  | Value type  | Example  |
-    |---|---|---|---|
-    | page  | query   | int  | 2  | 
-    | page_size  | query  | int  |2  |
+**Return codes**
+
+| Code  | Description  |
+|---|---|
+| 200  | OK |  
+    
 
 * `POST /todos`  
-    DELETE  /todos/{id} 
-    GET     /todos/{id} 
-    PUT     /todos/{id} 
 
-* parameters
-* accepts
-* returns
-* codes 
+Creates a todo and returns it.
 
-## Paging
+**Required data**
 
-## Examples
+The data required is a json object with the following properties:
+
+| Name  | Type  | Required  | 
+|---|---|---|
+| name  | string   | yes  | 
+| description  | string  | no |
+| tasks  | JSON Array  | no |
+
+The maximum tasks size is 25. The tasks array consist of objects with the following properties:
+
+| Name  | Type  | Required  |
+|---|---|---|
+| name  | string   | yes  | 
+| description  | string  | no |
+
+**Example data**
+
+    {
+        "name": "Monat vor Ulaub",
+        "tasks": [
+            {
+                "name": "Packliste erstellen"
+            },
+            {
+                "name": "Zahlungsmittel",
+                "description": "Kreditkarte und Bar"
+            }
+        ]
+    }
+
+**Return codes**
+
+| Code  | Description  |
+|---|---|
+| 201  | Created |
+| 422  | Mandatory data was not provided or trying to create too many tasks  |  
+
+* `PUT /todos/{id}`
+
+Updates the todo with the given `id`. If the element `tasks` is not provided, then it is not changed. If `tasks` is
+ provided as an empty json array, all existing tasks are deleted. All tasks are replaced by the new tasks if the
+  tasks array is provided in the request body.   
+
+**Parameters**
+
+| Name  | Type  | Value type  | Description |
+|---|---|---|---|
+| id  | path | int | The id of an existing todo. | 
+
+**Required data**
+
+See required data for endpoint `POST /todos`. 
+
+**Return codes**
+
+| Code  | Description  |
+|---|---|
+| 200  | Returns the updated todo with the given id |
+| 404  | The todo with the given id was not found |
+| 422  | Mandatory data was not provided  |  
+
+* `GET  /todos/{id}`
+
+Returns the todo with the given `id`.
+
+**Parameters**
+
+| Name  | Type  | Value type  | Description |
+|---|---|---|---|
+| id  | path | int | The id of an existing todo. | 
+
+
+**Return codes**
+
+| Code  | Description  |
+|---|---|
+| 200  | Returns the todo with the given id |
+| 404  | The todo with the given id was not found |
+
+
+* `DELETE  /todos/{id}`
+Deletes the todo with the given `id`. 
+
+**Parameters**
+
+| Name  | Type  | Value type  | Description |
+|---|---|---|---|
+| id  | path | int | The id of an existing todo. | 
+
+
+**Return codes**
+
+| Code  | Description  |
+|---|---|
+| 204  | The todo with the given `id` was sucessfully deleted or it doesn't exist. |
+     
+
+## Paging And Total Count
+
+ Retrieving data may result in a high number of entries. That is why the results are capped to a default of 100 in
+  several pages. The number of the first page is  which is also the page default. The pageSize default is 100. It can
+   be set to the maximum value of 1000. 
+   
+Information about paging and total count is provided in the `Link` and `X-Total-Count` headers.
+   
+The paging parameters are as follows:
+   
+| Name  | Type  | Value type |
+|---|---|---|
+| page  | query   | int |  
+| page_size  | query  | int |
+
+Example: 
+
+    curl --location --request GET 'http://localhost:8080/todos?page=2&page_size=7' --header 'Authorization: Bearer test-token'
 
 ## Further work
 
@@ -73,11 +215,9 @@ If the token is not valid a http 401 (Unauthorized) error code is returned.
 * Paging for tasks
 * Move authentication data to DB
     * User table
-    * ToDos per user
+    * todos per user
     * Endpoint POST /user for creating new user 
-    * endpoint /token for users to get the Bearer token
+    * endpoint POST /token to get the Bearer token
 * Generate entity classes from dropwizard migration files or hibernate mappings
-
-## Todo
-* logging config
-* readme
+* use https
+* handle CORS
