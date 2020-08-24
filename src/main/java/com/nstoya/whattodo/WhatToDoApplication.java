@@ -21,9 +21,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 
-import javax.validation.Valid;
-import javax.validation.Validator;
-
 
 public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
     public static void main(final String[] args) throws Exception {
@@ -71,8 +68,6 @@ public class WhatToDoApplication extends Application<WhatToDoConfiguration> {
         environment.jersey().register(new AuthDynamicFeature(oauthFilter));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
-
-        Validator validator = environment.getValidator();
 
         //register resources
         final ToDosResource resource = new ToDosResource(new ToDoDAO(hibernate.getSessionFactory()),

@@ -20,7 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 
-import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
@@ -50,22 +49,14 @@ public class ToDosResourceTest {
                     .setPrefix("Bearer")
                     .buildAuthFilter();
 
-    private static ResourceExtension r = ResourceExtension.builder()
+
+    private static final ResourceExtension RESOURCES =
+            ResourceExtension.builder()
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthDynamicFeature(O_AUTH_HANDLER))
             .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-        .build();
-
-
-    private static final ResourceExtension RESOURCES = r.builder().addResource(new ToDosResource(TODO_DAO, TASK_DAO, r.getValidator()))
+            .addResource(new ToDosResource(TODO_DAO, TASK_DAO, ResourceExtension.builder().build().getValidator()))
             .build();
-
-//            ResourceExtension.builder()
-//            .addProvider(RolesAllowedDynamicFeature.class)
-//            .addProvider(new AuthDynamicFeature(O_AUTH_HANDLER))
-//            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
-
-
 
     private ArgumentCaptor<ToDo> toDoCaptor = ArgumentCaptor.forClass(ToDo.class);
 
@@ -123,6 +114,20 @@ public class ToDosResourceTest {
     @Test
     public void createToDoEmptyName(){
         toDo.setName("");
+        Response response = RESOURCES.target("/todos")
+                .request(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, "Bearer test-token")
+                .post(Entity.entity(toDo, MediaType.APPLICATION_JSON));
+
+        assert response.getStatusInfo().getStatusCode() == 422;
+    }
+
+    @Test
+    public void createTasksNullName(){
+        for (Task t: toDo.getTasks()){
+            t.setName(null);
+        }
+
         Response response = RESOURCES.target("/todos")
                 .request(MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer test-token")

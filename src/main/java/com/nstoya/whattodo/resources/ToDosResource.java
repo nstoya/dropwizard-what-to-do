@@ -83,7 +83,7 @@ public class ToDosResource {
         List<String> validationMessages = validateTasks(toDo.getTasks());
 
         if (validationMessages.size() > 0) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
+            return Response.status(422).entity(validationMessages).build();
         }
         return Response.status(Response.Status.CREATED).entity(toDoDAO.create(toDo, taskDAO)).build();
     }
@@ -99,7 +99,7 @@ public class ToDosResource {
         List<String> validationMessages = validateTasks(toDo.getTasks());
 
         if (validationMessages.size() > 0) {
-            return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
+            return Response.status(422).entity(validationMessages).build();
         }
         ToDo e = toDoDAO.update(id, toDo);
         if(e != null){
