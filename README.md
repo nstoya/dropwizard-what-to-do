@@ -14,19 +14,19 @@ Make sure you have already
 
 To build and create example data run the following in a shell:
   
-    $ git clone https://github.com/nstoya/dropwizard-what-to-do.git
-    $ cd dropwizard-what-to-do
-    $ ./start.sh
+    git clone https://github.com/nstoya/dropwizard-what-to-do.git
+    cd dropwizard-what-to-do
+    ./setup
     
 ## Start
 
 Start the application via
 
-    $ docker-compose up
+    docker-compose up
   
 The application should be running on http://localhost:8080 and you should be able to send requests. There is already some sample data.
 
-    $ curl --location --request GET 'http://localhost:8080/todos' --header 'Authorization: Bearer test-token'
+    curl -X GET 'http://localhost:8080/todos' -H 'Authorization: Bearer test-token'
     
 If everything is fine you should get:
 
@@ -74,7 +74,7 @@ If the token is not valid a http 401 (Unauthorized) error code is returned.
 
 ## Endpoints
 
-* `GET /todos` 
+### `GET /todos` 
 
 Returns a list of all todos and their tasks. For this endpoint paging is provided. Please check chapter **Paging And
  Total Count**.
@@ -84,9 +84,12 @@ Returns a list of all todos and their tasks. For this endpoint paging is provide
 | Code  | Description  |
 |---|---|
 | 200  | OK |  
-    
 
-* `POST /todos`  
+**Example**
+
+        curl -X GET 'http://localhost:8080/todos' -H 'Authorization: Bearer test-token'
+
+### `POST /todos`  
 
 Creates a todo and returns it.
 
@@ -107,9 +110,20 @@ The maximum tasks size is 25. The tasks array consist of objects with the follow
 | name  | string   | yes  | 
 | description  | string  | no |
 
-**Example data**
 
-    {
+**Return codes**
+
+| Code  | Description  |
+|---|---|
+| 201  | Created |
+| 422  | Mandatory data was not provided or trying to create too many tasks  |  
+
+**Example**
+
+    curl -X POST 'http://localhost:8080/todos' \
+    -H 'Authorization: Bearer test-token' \
+    -H 'Content-Type: application/json' \
+    --data-raw '{
         "name": "Monat vor Ulaub",
         "tasks": [
             {
@@ -120,16 +134,10 @@ The maximum tasks size is 25. The tasks array consist of objects with the follow
                 "description": "Kreditkarte und Bar"
             }
         ]
-    }
+    }'
 
-**Return codes**
 
-| Code  | Description  |
-|---|---|
-| 201  | Created |
-| 422  | Mandatory data was not provided or trying to create too many tasks  |  
-
-* `PUT /todos/{id}`
+### `PUT /todos/{id}`
 
 Updates the todo with the given `id`. If the element `tasks` is not provided, then it is not changed. If `tasks` is
  provided as an empty json array, all existing tasks are deleted. All tasks are replaced by the new tasks if the
@@ -151,7 +159,30 @@ See required data for endpoint `POST /todos`.
 |---|---|
 | 200  | Returns the updated todo with the given id |
 | 404  | The todo with the given id was not found |
-| 422  | Mandatory data was not provided  |  
+| 422  | Mandatory data was not provided or trying to create too many tasks |  
+
+**Example**
+
+    curl -X PUT 'http://localhost:8080/todos/1' \
+    -H 'Authorization: Bearer test-token' \
+    -H 'Content-Type: application/json' \
+    --data-raw '{
+            "id": 1,
+            "name": "Vor dem Urlaub",
+            "description": "6 Wochen vorher",
+            "tasks": [
+                {
+                    "name": "Gültigkeit Reisepässe"
+                },
+                {
+                    "name": "Gepäckbestimmungen",
+                    "description": "für Lufthansa"
+                },
+                {
+                    "name": "Impfen lassen"
+                }
+            ]
+        }'
 
 * `GET  /todos/{id}`
 
@@ -171,8 +202,12 @@ Returns the todo with the given `id`.
 | 200  | Returns the todo with the given id |
 | 404  | The todo with the given id was not found |
 
+**Example**
 
-* `DELETE  /todos/{id}`
+    curl -X GET 'http://localhost:8080/todos/1'  -H 'Authorization: Bearer test-token'
+
+### `DELETE  /todos/{id}`
+
 Deletes the todo with the given `id`. 
 
 **Parameters**
@@ -188,6 +223,10 @@ Deletes the todo with the given `id`.
 |---|---|
 | 204  | The todo with the given `id` was sucessfully deleted or it doesn't exist. |
      
+
+**Example**
+
+    curl -X DELETE 'http://localhost:8080/todos/6' -H 'Authorization: Bearer test-token' 
 
 ## Paging And Total Count
 
