@@ -184,7 +184,7 @@ See required data for endpoint `POST /todos`.
             ]
         }'
 
-* `GET  /todos/{id}`
+### `GET  /todos/{id}`
 
 Returns the todo with the given `id`.
 
@@ -204,7 +204,7 @@ Returns the todo with the given `id`.
 
 **Example**
 
-    curl -X GET 'http://localhost:8080/todos/1'  -H 'Authorization: Bearer test-token'
+    curl -X GET 'http://localhost:8080/todos/1' -H 'Authorization: Bearer test-token'
 
 ### `DELETE  /todos/{id}`
 
