@@ -16,7 +16,7 @@ To build and create example data run the following in a shell:
   
     $ git clone https://github.com/nstoya/dropwizard-what-to-do.git
     $ cd dropwizard-what-to-do
-    $./start.sh
+    $ ./start.sh
     
 ## Start
 
