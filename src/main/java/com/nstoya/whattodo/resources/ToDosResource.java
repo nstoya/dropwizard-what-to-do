@@ -28,6 +28,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -78,16 +79,8 @@ public class ToDosResource {
     @UnitOfWork
     @PermitAll
     public Response createTodo(@Auth User user, @Valid ToDo toDo) {
-        // validation
-        Set<ConstraintViolation<Task>> violations = new HashSet<>();
 
-        ArrayList<String> validationMessages = new ArrayList<String>();
-        for (int i = 1; i <= toDo.getTasks().size(); i++){
-            Set<ConstraintViolation<Task>> taskViolations = validator.validate(toDo.getTasks().get(i-1));
-            for (ConstraintViolation<Task> violation : taskViolations) {
-                validationMessages.add("tasks [" + i + "] " + violation.getPropertyPath().toString() + ": " + violation.getMessage());
-            }
-        }
+        List<String> validationMessages = validateTasks(toDo.getTasks());
 
         if (validationMessages.size() > 0) {
             return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
@@ -103,6 +96,11 @@ public class ToDosResource {
     @PermitAll
     public Response updateTodoById(@Auth User user, @PathParam("id") Long id, @Valid ToDo toDo) {
 
+        List<String> validationMessages = validateTasks(toDo.getTasks());
+
+        if (validationMessages.size() > 0) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(validationMessages).build();
+        }
         ToDo e = toDoDAO.update(id, toDo);
         if(e != null){
             return Response.ok(e).build();
@@ -118,6 +116,17 @@ public class ToDosResource {
         boolean success = toDoDAO.delete(id);
         //do we want to tell if the object didn't exist anyway?
         return Response.status(Response.Status.NO_CONTENT).build();
+    }
+
+    private List<String> validateTasks(List<Task> tasks){
+        ArrayList<String> validationMessages = new ArrayList<String>();
+        for (int i = 1; i <= tasks.size(); i++){
+            Set<ConstraintViolation<Task>> taskViolations = validator.validate(tasks.get(i-1));
+            for (ConstraintViolation<Task> violation : taskViolations) {
+                validationMessages.add("tasks [" + i + "] " + violation.getPropertyPath().toString() + ": " + violation.getMessage());
+            }
+        }
+        return validationMessages;
     }
 
 }
